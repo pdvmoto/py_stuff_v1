@@ -54,7 +54,7 @@ order by name
 """ 
 
 
-#  con = cx_Oracle.connect('pdevisser/PietatPortbase@127.0.0.1:9000/pcs')
+#  con = cx_Oracle.connect('pdevisser/change_on_install@127.0.0.1:9000/pcs')
 con = cx_Oracle.connect('scott/tiger@127.0.0.1:1521/orclpdb1')
 print (con.version)
 
