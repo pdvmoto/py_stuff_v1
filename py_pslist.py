@@ -172,7 +172,7 @@ for  psinfo in pslist :
 # f_inspect_obj( 'proc_info', proc.info )
 
 print ( f_prfx() )
-print ( f_prfx(), "                 Total cpu-perc", round ( perc_total, 2) )
+print ( f_prfx(), "                        Total cpu-perc", round ( perc_total, 2) )
 print ( f_prfx() )
 print ( f_prfx(), " -------- End of program -------- " )
 
