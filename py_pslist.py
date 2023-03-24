@@ -2,7 +2,7 @@
 
 ############
 #
-# comments, design, struture, layout here...
+# comments, design, struture, layout here... ...1§
 # 1. use some debug-stuff from other py sources..
 # 2. user psutil library
 # 2a. verify the data .. e.g. processes + their data, verify with ps-ef
@@ -92,12 +92,12 @@ print ( f_prfx() )
 
 
 # ps_temps = psutil.sensors_temperatures()
-# ps_cpu_tim = psutil.cpu_times() 
+ps_cpu_tim = psutil.cpu_times() 
 # print ( f_prfx(), "CPU times: ", ps_cpu_tim )
 
 
-# ps_cpu_phys = psutil.cpu_count(logical=False)
-# ps_cpu_log  = psutil.cpu_count(logical=True)
+ps_cpu_phys = psutil.cpu_count(logical=False)
+ps_cpu_log  = psutil.cpu_count(logical=True)
 # print ( f_prfx(), "CPU count, logical and phys", ps_cpu_log, ps_cpu_phys )
 
 # print ( f_prfx(), "cpu freq " , psutil.cpu_freq(percpu=True) )
@@ -109,72 +109,49 @@ print ( f_prfx() )
 
 # hit_enter = input ( f_prfx() + "now measring cpu 3sec " + "...., hit enter.." )
 
-for proc in psutil.process_iter( ['pid', 'name', 'username', 'cpu_percent', 'ppid', 'num_threads' ] ):
+for proc in psutil.process_iter( ['pid', 'name', 'username', 'cpu_percent'] ):
   # print( f_prfx(), " proc info: ", proc.info)
   # f_inspect_obj( 'proc_info', proc.info )
   proc_cpu_perc = proc.info.get('cpu_percent') 
   proc_pid      = proc.info.get('pid') 
-  proc_ppid     = proc.info.get('ppid') 
-  proc_name     = proc.info.get('name') 
+  proc_name      = proc.info.get('name') 
   # print ( f_prfx(), " pid + cpu percent: ", proc_pid, proc_cpu_perc, proc_name )
   
 # initialized counters and properties ..
 
-tim.sleep ( 3) 
+tim.sleep ( 5) 
 
-# initiate
 perc_total = 0.0
-pslist=[] 
+
+i_numfound = 0
+i_numcounted = 0
 
 # 2nd call.. to have meaningful values
-for proc in psutil.process_iter( ['pid', 'name', 'username', 'cpu_percent', 'ppid', 'num_threads' ] ):
+for proc in psutil.process_iter( ['pid', 'name', 'username', 'cpu_percent'] ):
   # print( f_prfx(), " proc info: ", proc.info)
   # f_inspect_obj( 'proc_info', proc.info )
   proc_cpu_perc = proc.info.get('cpu_percent') 
   proc_pid      = proc.info.get('pid') 
-  proc_ppid     = proc.info.get('ppid') 
-  proc_name     = proc.info.get('name') 
-  proc_nthreads = proc.info.get('num_threads') 
+  proc_name      = proc.info.get('name') 
+
+  i_numfound = i_numfound + 1
 
   if not isinstance(proc_cpu_perc, float):
     f_perc = 0.0
   else:
     f_perc = float ( proc_cpu_perc ) 
     perc_total = perc_total + f_perc
+    i_numcounted = i_numcounted + 1
   
-  if f_perc > 0.2 :
-    # print ( f_prfx(), " pid + cpu percent: ", repr(proc_ppid).rjust(5), repr(proc_pid).rjust(7), '{:7.1f}'.format ( f_perc ), " " + proc_name )
-    pslist.append ( proc.info ) 
+  if f_perc > 0.9 :
+    print ( f_prfx(), " pid + cpu percent: ", f"{proc_pid:5d}", f"{f_perc:4.1f}", proc_name )
   
-# end 2nd loop, printed values above threshold
-
-# try sorting the collected list, highest cpu-perc at bottom of list
-pslist.sort( key=lambda x: (x['cpu_percent'], x['ppid'], x['pid']) ) 
-
-# print ( pslist )
-# f_inspect_obj( 'pslist after sorting: ', pslist )
-
-for  psinfo in pslist :
-  proc_cpu_perc = psinfo.get('cpu_percent') 
-  proc_pid      = psinfo.get('pid') 
-  proc_ppid     = psinfo.get('ppid') 
-  proc_name     = psinfo.get('name') 
-  proc_nthreads = psinfo.get('num_threads')
-  f_perc = float ( proc_cpu_perc ) 
-  print ( f_prfx(), " pid + cpu percent: ", repr(proc_ppid).rjust(5), repr(proc_pid).rjust(7), '{:7.1f}'.format ( f_perc ), " ", proc_name , "(", proc_nthreads, ")" )
-
-# end for, printed ps-data in order of sort
-
-# print ( f_prfx(), " -------- End of Loop -------- " )
-# print ( f_prfx() )
-
-# show the last one, inspect
-# f_inspect_obj( 'proc_info', proc.info )
+# 2nd loop, printed values above threshold
 
 print ( f_prfx() )
-print ( f_prfx(), "                        Total cpu-perc", round ( perc_total, 2) )
+print ( f_prfx(), "         Total cpu-perc: ", f"{perc_total:6.2f}", "  total/counted: ", f"{i_numfound:4d}", "/", f"{i_numcounted:4d}" )
 print ( f_prfx() )
-print ( f_prfx(), " -------- End of program -------- " )
+print ( f_prfx(), " -------- End -------- " )
 
 
 
